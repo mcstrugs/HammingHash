@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 static int G[11] =
     {(0b1100<<11) + (1<<10),
@@ -45,13 +46,25 @@ int isAdjacent(int a, int b)
 }
 
 int main() {
+    // using malloc and a 1d array because array is very large
+    int* adj;
+    adj = (int *) malloc(2048*2048 * sizeof(int));
     for (int i = 0; i < 2048; i++)
     {
         for (int j = 0; j < 2048; j++)
         {
-            printf("%d",isAdjacent(i,j));
+            adj[i + 2048*j] = isAdjacent(i,j);
         }
-        printf("\n");
+    }
+
+    // printing
+    for (int i = 0; i < 2048; i++)
+    {
+        for (int j = 0; j < 2048; j++)
+        {
+            printf("%d",adj[i + 2048*j]);
+        }
+        putchar('\n');
     }
     return 0;
 }
