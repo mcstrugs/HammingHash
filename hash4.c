@@ -14,7 +14,7 @@ static int G[11] =
     (0b0111<<11) + (1<<1),
     (0b1111<<11) + (1)};
 
-static int minWeights =
+static int minWeights[35] =
 {3,5,9,17,32,
 36,40,50,64,66,
 72,84,128,132,138,
@@ -56,9 +56,29 @@ int isAdjacent(int a, int b)
 
 int main() {
     // compute minimum weight words
-    for (int i = 0; i < 2048; i++)
+    int c;
+    int hash = 0;
+    int index = 0;
+    while((c = getchar()) != EOF)
     {
-        if (isAdjacent(i,0))
-            printf("%d\n",i);
+        while(c > 0) {
+            if (c % 2 == 1)
+            {
+                index += 1;
+                index %= 35;
+                hash ^= minWeights[index];
+            } else {
+                index -= 1;
+                index %= 35;
+                hash ^= minWeights[index];
+            }
+            hash %= 2048;
+            c >>= 1;
+        }
+        //hash ^= minWeights[c % 35];
+        //hash %= 2048;
     }
+    printf("%d\n",hash);
+
+    return 0;
 }
