@@ -1,7 +1,7 @@
-use std::io;
 use array2d::Array2D;
 
 extern crate image;
+
 
 static N: i32 = (1<<5) - 5 - 1;
 static G: [i32; 26] = [
@@ -33,20 +33,21 @@ static G: [i32; 26] = [
 0b1111100000000000000000000000001
 ];
 
-fn fillG() -> [i32; 26] {
-    let mut Gm: [i32; 26] = [0;26];
+#[allow(dead_code)]
+fn fill_g() -> [i32; 26] {
+    let mut gm: [i32; 26] = [0;26];
     let mut index: i32 = 0;
     for i in 0..32
     {
-        if countBits(i) > 1 {
-            Gm[index as usize] = i<<(N) ^ (1<<(N - index - 1));
+        if count_bits(i) > 1 {
+            gm[index as usize] = i<<(N) ^ (1<<(N - index - 1));
             index += 1;
         }
     }
-    return Gm;
+    return gm;
 }
 
-fn countBits(num: i32) -> i32
+fn count_bits(num: i32) -> i32
 {
     let mut count = 0;
     let mut n = num;
@@ -57,32 +58,34 @@ fn countBits(num: i32) -> i32
     return count;
 }
 
-fn left_multiplyG(a: i32) -> i32
+fn left_multiply_g(a: i32) -> i32
 {
     let mut code = 0;
-    let mut n = N;
+    let n = N;
     for i in 0..n {
         code = code^((a & 1<<i)>>i) * G[(n - i - 1) as usize];
     }
     return code;
 }
 
-fn isAdjacent(a: i32, b: i32) -> bool
+#[allow(dead_code)]
+fn is_adjacent(a: i32, b: i32) -> bool
 {
-    let a_code = left_multiplyG(a);
-    let b_code = left_multiplyG(b);
+    let a_code = left_multiply_g(a);
+    let b_code = left_multiply_g(b);
     let diff = a_code ^ b_code;
 
-    return countBits(diff) == 3;
+    return count_bits(diff) == 3;
 }
 
 fn hamming_distance(a: i32, b: i32) -> i32
 {
-    let a_code = left_multiplyG(a);
-    let b_code = left_multiplyG(b);
-    return countBits(a_code ^ b_code);
+    let a_code = left_multiply_g(a);
+    let b_code = left_multiply_g(b);
+    return count_bits(a_code ^ b_code);
 }
 
+#[allow(dead_code)]
 fn draw_set(set: Array2D<bool>) { // boolean only
     let imgy = set.column_len() as u32;
     let imgx = set.row_len() as u32;
@@ -105,7 +108,7 @@ fn draw_dists(set: Array2D<i32>) {
     for (x,y,pix) in imgbuf.enumerate_pixels_mut() {
         let dist = *set.get(y as usize, x as usize).unwrap();
         let col = dist*8;
-        if dist == 3 {
+        if dist == 3 { // Draw dist 3's red, change to 'false' to just draw ham dist
             *pix = image::Rgb([255 as u8, 0 as u8, 0 as u8]);
         } else {
             *pix = image::Rgb([col as u8, col as u8,col as u8]);
@@ -125,7 +128,7 @@ fn main() {
     //let mut set = Array2D::filled_with(false, h as usize, w as usize);
     //for i in 0..h {
     //    for j in 0..w {
-    //        if isAdjacent(i,j) {
+    //        if is_adjacent(i,j) {
     //            set.set(i as usize,j as usize,true);
     //        }
     //    }
@@ -138,7 +141,9 @@ fn main() {
     for i in 0..h {
         for j in 0..w {
             let dist = hamming_distance(i,j);
-            dists.set(i as usize, j as usize, dist);
+            #[allow(unused_must_use)]
+            let result = dists.set(i as usize, j as usize, dist);
+            assert_eq!(result, Ok(()));
         }
     }
     draw_dists(dists);
