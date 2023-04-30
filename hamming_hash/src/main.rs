@@ -78,6 +78,7 @@ fn is_adjacent(a: i32, b: i32) -> bool
     return count_bits(diff) == 3;
 }
 
+#[allow(dead_code)]
 fn hamming_distance(a: i32, b: i32) -> i32
 {
     let a_code = left_multiply_g(a);
@@ -101,6 +102,7 @@ fn draw_set(set: Array2D<bool>) { // boolean only
     imgbuf.save("img.png").unwrap();
 }
 
+#[allow(dead_code)]
 fn draw_dists(set: Array2D<i32>) {
     let imgy = set.column_len() as u32;
     let imgx = set.row_len() as u32;
@@ -118,22 +120,32 @@ fn draw_dists(set: Array2D<i32>) {
 }
 
 fn main() {
-    //let G: [i32; 26] = fillG();
-    //for i in 0..26 {
-    //    println!("{:031b}", G[i]);
-    //}
 
-    //let h = 16*2048;
-    //let w = 16*2048;
-    //let mut set = Array2D::filled_with(false, h as usize, w as usize);
-    //for i in 0..h {
-    //    for j in 0..w {
-    //        if is_adjacent(i,j) {
-    //            set.set(i as usize,j as usize,true);
-    //        }
-    //    }
-    //}
-    //draw_set(set);
+    /*
+    for i in 0..26 {
+        println!("{:031b}", G[i]);
+    }
+    */
+
+    /*
+    let h = 2048;
+    let w = 2048;
+    let mut set = Array2D::filled_with(false, h as usize, w as usize);
+    let mut set_non_code = Array2D::filled_with(false, h as usize, w as usize);
+    for i in 0..h {
+        for j in 0..w {
+            if is_adjacent(i,j) {
+                let result = set.set(i as usize,j as usize,true);
+                assert_eq!(result, Ok(()));
+            }
+            if count_bits(i^j) == 1 { // ham distance between integers
+                let result = set_non_code.set(i as usize,j as usize, true);
+                assert_eq!(result, Ok(()));
+            }
+        }
+    }
+    draw_set(set);
+    */
 
     let h = 2*2048;
     let w = 2*2048;
